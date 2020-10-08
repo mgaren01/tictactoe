@@ -111,3 +111,47 @@
         - update Model
         - remove click handler
         - check victory
+
+
+
+function checkVictory() {
+        clicker.win = '?';
+        return win(0,1,2) ||
+               win(3,4,5) ||
+               win(6,7,8) ||
+               win(0,3,6) ||
+               win(1,4,7) ||
+               win(2,5,8) ||
+               win(0,4,8) ||
+               win(2,4,6) ||
+               gameDraw();
+}
+
+function win {
+
+}
+
+
+    check if state >= 5 (pass data from 'clicker' function; also pass value of 'ree')
+        if false, do nothing
+        if true
+            look at tile combinations:
+                [(0, 1, 2),
+                (3, 4, 5),
+                (6, 7, 8),
+                (0, 3, 6),
+                (1, 4, 7),
+                (2, 5, 8),
+                (0, 4, 8),
+                (2, 4, 6)]
+                capture number values (given by 'x' and 'o') and do math to add them 
+                    if array includes one or more zeroes
+                        do nothing
+                    if array includes no zeroes, do math 
+                        on sum of 3
+                            alert: Player 2 Wins
+                        on sum of 12
+                            alert: Player 1 Wins
+        if 9 clicks (clicks >= 8)
+            if no victory
+                alert: The Game is a Draw

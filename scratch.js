@@ -2,7 +2,7 @@
 var state = 0  //set global default state to 0
 var board = document.getElementById("board") //pulls 'board' div from html into global memory
 var clickData = [0, 0, 0, 0, 0, 0, 0, 0, 0] //creates empty array, each of the 9 zeroes represents a value associated with 'x' or 'o'
-
+var clickArray = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
 function init() { //things to perform on load
     state = 0  // sets state on load to 0
@@ -11,11 +11,12 @@ function init() { //things to perform on load
 
 function createBoard() {
     var board = document.getElementById('board');//pulls 'board' div into function's memory
+    board.innerHTML = '' //initially sets blank board before fully loading, for purposes of reset
     var row = document.createElement('div'); //creates 'row' div in html
     row.setAttribute('class', 'row'); //sets class of 'row' variable
-    for (i = 0; i <= 8; i++) { //repeats lines 17 - 25 nine times, creating columns, buttons, and event listeners; appends all together
+    for (i = 0; i <= 8; i++) { //repeats lines 17 - 25 nine times, creating columns, buttons, and event listeners; appends all together (see below)
         var col = document.createElement('div'); //creates 'column' div in html
-        col.setAttribute('class', 'col-4'); //sets class of 'column' variable, makes sure each column only takes up 1/3 of horizontal space
+        col.setAttribute('class', 'col-4 text-center'); //sets class of 'column' variable, makes sure each column only takes up 1/3 of horizontal space
         var btn = document.createElement('button'); //creates button element in html
         btn.setAttribute('class', 'btn'); //sets class of 'button' variable
         btn.setAttribute('id', i); //sets id of each button to coincide with value of i(see 16)
@@ -24,94 +25,99 @@ function createBoard() {
         col.appendChild(btn); //appends buttons to columns
         row.appendChild(col); //appends columns to the row element 
     }
+    var row2 = document.createElement('div'); //creates second row
+    row2.setAttribute('class', 'row'); //assigns row2 its attribute
+        var col2 = document.createElement('div'); //creates second column
+        col2.setAttribute('class', 'col-12 text-center');   //set col2 attribute
+            var restart = document.createElement('button'); //creates reset button
+            restart.setAttribute('class', 'btn'); //sets button attribute
+            restart.textContent = 'Reset';  //gives reset button text
+            restart.addEventListener('click', startOver); //button listens for click, runs startOver function
+        col2.appendChild(restart); //adds reset to column
+    row2.appendChild(col2); //adds column to row
+
     board.appendChild(row); //appends row to board (not looped because there is only one row)
+    board.appendChild(row2); //adds row2 to board
 }
 
 function clicker(e) {
     var id = e.target.id //
     //console.log(id)
-    var v = "X"; //sets default value on click to be 'X'
-    var ree = 1; //sets default number value, associated with X; populates array (line 4)
-    if (state % 2) { //checks if state number does not divide evenly by 2; in that case: 
-        v = "O"; //sets value on click to be 'O'
-        ree = 2; //sets number value, in association with O; populates array
+    if (state % 2) { //if state # does not divide evenly by two, then:
+        var v = "O"; //sets value on click to be 'O'
+        clickData[id] += 1; //sets id of clicked tile equal to value of 1 (populates array on line 4)
+    } 
+    else { //if state number does divide evenly by 2, then: 
+        v = "X"; //sets value on click to be 'X'
+        clickData[id] += 4; //sets id of clicked tile equal to value of 4 (populates array on line 4)
     }
-
+    //console.log(clickData)
+    //console.log(state)
     var btn = document.getElementById(id); //enters button in function memory
     btn.removeEventListener('click', clicker) //on click, removes click listener so button can't be clicked twice
     btn.textContent = v; //replaces initial text content ('Play') with value of v (state dependent)
+    setState(id) //calls setState function; passes values of 'id' 
+    checkWin() //calls checkWin function
+}
 
-    setState(id, ree) //calls setState function; passes values of 'id' and 'ree'
+function checkWin() {
+    //check to see if state > 5
+    if (state >= 4) {
+        //read array, looping through it
+        for (var i = 0; i < clickArray.length; i++) {
+            var combo = clickArray[i];
+            console.log(clickData[combo[0]]);
+            //console.log(clickData[combo[1]]);
+            //console.log(clickData[combo[2]]);
+            if (clickData[combo[0]] == 0 || clickData[combo[1]] == 0 || clickData[combo[2]] == 0 || 
+                (clickData[combo[3]] == 0 || clickData[combo[4]] == 0 || clickData[combo[5]] == 0) || 
+                (clickData[combo[6]] == 0 || clickData[combo[7]] == 0 || clickData[combo[8]] == 0) ||
+                (clickData[combo[0]] == 0 || clickData[combo[3]] == 0 || clickData[combo[6]] == 0) ||
+                (clickData[combo[1]] == 0 || clickData[combo[4]] == 0 || clickData[combo[7]] == 0) ||
+                (clickData[combo[2]] == 0 || clickData[combo[5]] == 0 || clickData[combo[8]] == 0) ||
+                (clickData[combo[0]] == 0 || clickData[combo[4]] == 0 || clickData[combo[8]] == 0) ||
+                (clickData[combo[2]] == 0 || clickData[combo[4]] == 0 || clickData[combo[6]] == 0)) {
+                // if these three values have a 0, no winner
+                //console.log('hi')
+            }
+            else {
+                // if these three values don't have a 0 and add up to 3, O wins
+                if (clickData[0] + clickData[1] + clickData[2] === 3 ||
+                    (clickData[3] + clickData[4] + clickData[5] === 3 ||
+                    (clickData[6] + clickData[7] + clickData[8] === 3 ||
+                    (clickData[0] + clickData[3] + clickData[6] === 3 ||
+                    (clickData[1] + clickData[4] + clickData[7] === 3 ||
+                    (clickData[2] + clickData[5] + clickData[8] === 3 ||
+                    (clickData[0] + clickData[4] + clickData[8] === 3 ||
+                    (clickData[2] + clickData[4] + clickData[6] === 3)))))))) {
+                    alert('Player Two Wins')
+                }
+                // .... add up to 12, X wins
+                if (clickData[0] + clickData[1] + clickData[2] === 12 ||
+                    (clickData[3] + clickData[4] + clickData[5] === 12 ||
+                    (clickData[6] + clickData[7] + clickData[8] === 12 ||
+                    (clickData[0] + clickData[3] + clickData[6] === 12 ||
+                    (clickData[1] + clickData[4] + clickData[7] === 12 ||
+                    (clickData[2] + clickData[5] + clickData[8] === 12 ||
+                    (clickData[0] + clickData[4] + clickData[8] === 12 ||
+                    (clickData[2] + clickData[4] + clickData[6] === 12)))))))) {
+                    alert('Player One Wins')
+                }
+            }
+        }
+    }
 }
 
 
-function setState(index, ree) {
+
+function setState(index) {
     state++  // increments state
-    clickData[index] = ree
+    //clickData[index] = ree 
     //nextState()
 }
 
 function startOver() {
-    state = 0
+    init()
+    //state = 0
     //nextState()
 }
-
-
-//function nextState() {
-    // if (state == i % 2) {
-    //     button.addEventListener('click', 'o');
-    //     button.removeEventListener('click');
-    // }
-    // else {
-    //     button.addEventListener('click' , 'x');
-    //     button.removeEventListener('click');
-    // }
-//}
-
-
-//function checkVictory() {
-//     - victoryCondition
-//     - if state >= 5, check for victory
-  //  if (state >= 5) {
-
-    //}
-//     - define input values
-//         - '' = 0
-       // let '' = 0;
-//         - 'x' = 1
-       // let 'x' = 1;
-//         - 'o' = 2
-      //  let 'o' = 2;
-//     - assign each tile a number (0, 1, 2, 
-//                                  3, 4, 5, 
-//                                  6, 7, 8)
-
-//     - check:
-//         [(0, 1, 2),
-//         (3, 4, 5),
-//         (6, 7, 8),
-//         (0, 3, 6),
-//         (1, 4, 7),
-//         (2, 5, 8),
-//         (0, 4, 8),
-//         (2, 4, 6)]
-//     - ignore value of 0
-//     - add values of 1 and 2 across given arrays
-//     - sum of 3 or 6 = victory condition 
-
-// - check state
-
-//         - on victory, display victory message
-//     - if state > 8 and no victory
-//         - display draw message    
-//}
-
-// createBoard
-        // - 9 buttons, 3 x 3
-        // - each tile is a button
-
-    // displayVictory
-    //     -message
-
-    // displayDraw
-    //     -message
