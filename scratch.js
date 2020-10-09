@@ -6,7 +6,13 @@ var clickArray = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 
 
 function init() { //things to perform on load
     state = 0  // sets state on load to 0
-    createBoard(); //calls createBoard function, below(12)
+    const overDiv = document.getElementById('overDiv')
+    overDiv.setAttribute('class', 'jumbotron jumbotron-fluid text-center bg-warning');
+            var h1 = document.createElement('h1');
+            h1.setAttribute('class', 'text-center');
+            h1.innerText = 'Tic Tac Toe';
+    overDiv.appendChild(h1);
+    createBoard(); //calls createBoard function, below
 }
 
 function createBoard() {
@@ -16,21 +22,24 @@ function createBoard() {
     row.setAttribute('class', 'row'); //sets class of 'row' variable
     for (i = 0; i <= 8; i++) { //repeats lines 17 - 25 nine times, creating columns, buttons, and event listeners; appends all together (see below)
         var col = document.createElement('div'); //creates 'column' div in html
-        col.setAttribute('class', 'col-4 text-center'); //sets class of 'column' variable, makes sure each column only takes up 1/3 of horizontal space
+        col.setAttribute('class', 'col-4 text-center mt-3'); //sets class of 'column' variable, makes sure each column only takes up 1/3 of horizontal space
         var btn = document.createElement('button'); //creates button element in html
-        btn.setAttribute('class', 'btn'); //sets class of 'button' variable
+        btn.setAttribute('class', 'bg-success');
+        btn.style.minHeight = '100px'; //sets class of 'button' variable
+        btn.style.minWidth = '100px';
         btn.setAttribute('id', i); //sets id of each button to coincide with value of i(see 16)
         btn.textContent = "Play"; //sets default content on each button, making sure it's known the space can be clicked
         btn.addEventListener('click', clicker); //each button listens for a click, on click, calls clicker function
         col.appendChild(btn); //appends buttons to columns
         row.appendChild(col); //appends columns to the row element 
     }
+    
     var row2 = document.createElement('div'); //creates second row
-    row2.setAttribute('class', 'row'); //assigns row2 its attribute
+    row2.setAttribute('class', 'row mt-5'); //assigns row2 its attribute
         var col2 = document.createElement('div'); //creates second column
         col2.setAttribute('class', 'col-12 text-center');   //set col2 attribute
             var restart = document.createElement('button'); //creates reset button
-            restart.setAttribute('class', 'btn'); //sets button attribute
+            restart.setAttribute('class', 'bg-danger'); //sets button attribute
             restart.textContent = 'Reset';  //gives reset button text
             restart.addEventListener('click', startOver); //button listens for click, runs startOver function
         col2.appendChild(restart); //adds reset to column
@@ -65,10 +74,11 @@ function checkWin() {
     if (state >= 4) {
         //read array, looping through it
         for (var i = 0; i < clickArray.length; i++) {
-            var combo = clickArray[i];
-            console.log(clickData[combo[0]]);
-            //console.log(clickData[combo[1]]);
-            //console.log(clickData[combo[2]]);
+            var combo = clickArray[i]; //variable 'combo' is set equal to one of the sub-arrays that define win combinations
+                //console.log(clickData[combo[0]]);
+                //console.log(clickData[combo[1]]);
+                //console.log(clickData[combo[2]]);
+            //check if any values within sub-array = 0
             if (clickData[combo[0]] == 0 || clickData[combo[1]] == 0 || clickData[combo[2]] == 0 || 
                 (clickData[combo[3]] == 0 || clickData[combo[4]] == 0 || clickData[combo[5]] == 0) || 
                 (clickData[combo[6]] == 0 || clickData[combo[7]] == 0 || clickData[combo[8]] == 0) ||
@@ -77,11 +87,12 @@ function checkWin() {
                 (clickData[combo[2]] == 0 || clickData[combo[5]] == 0 || clickData[combo[8]] == 0) ||
                 (clickData[combo[0]] == 0 || clickData[combo[4]] == 0 || clickData[combo[8]] == 0) ||
                 (clickData[combo[2]] == 0 || clickData[combo[4]] == 0 || clickData[combo[6]] == 0)) {
-                // if these three values have a 0, no winner
+                // if any of the three values have a 0, no winner
                 //console.log('hi')
             }
             else {
                 // if these three values don't have a 0 and add up to 3, O wins
+                //check if the three values of the sub-array add to 3
                 if (clickData[0] + clickData[1] + clickData[2] === 3 ||
                     (clickData[3] + clickData[4] + clickData[5] === 3 ||
                     (clickData[6] + clickData[7] + clickData[8] === 3 ||
@@ -90,6 +101,7 @@ function checkWin() {
                     (clickData[2] + clickData[5] + clickData[8] === 3 ||
                     (clickData[0] + clickData[4] + clickData[8] === 3 ||
                     (clickData[2] + clickData[4] + clickData[6] === 3)))))))) {
+                    //if sum = 3, send alert declaring winner
                     alert('Player Two Wins')
                 }
                 // .... add up to 12, X wins
@@ -101,6 +113,7 @@ function checkWin() {
                     (clickData[2] + clickData[5] + clickData[8] === 12 ||
                     (clickData[0] + clickData[4] + clickData[8] === 12 ||
                     (clickData[2] + clickData[4] + clickData[6] === 12)))))))) {
+                    //if sum = 12, send alert declaring winner
                     alert('Player One Wins')
                 }
             }
